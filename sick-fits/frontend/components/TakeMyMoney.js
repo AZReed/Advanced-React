@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import StrypeCheckout from 'react-stripe-checkout';
 import { Mutation } from 'react-apollo';
 import Router from 'next/router';
-import Nprogress from 'nprogress';
+import NProgress from 'nprogress';
 import gql from 'graphql-tag';
 import calcTotalPrice from '../lib/calcTotalPrice';
 import Error from './ErrorMessage';
@@ -29,6 +29,7 @@ function totalItems(cart) {
 
 class TakeMyMoney extends Component {
   onToken = async (res, createOrder) => {
+    NProgress.start();
     const order = await createOrder({
       variables: {
         token: res.id
@@ -36,7 +37,10 @@ class TakeMyMoney extends Component {
     }).catch(err => {
       alert(err.message);
     });
-    console.log(order);
+    Router.push({
+      pathname: '/order',
+      query: { id: order.data.createOrder.id }
+    });
   };
 
   render() {
@@ -52,7 +56,9 @@ class TakeMyMoney extends Component {
                 amount={calcTotalPrice(me.cart)}
                 name="Sick Fits"
                 description={`Order of ${totalItems(me.cart)} items`}
-                image={me.cart.length && me.cart[0].item && me.cart[0].item.image}
+                image={
+                  me.cart.length && me.cart[0].item && me.cart[0].item.image
+                }
                 stripeKey="pk_test_6YeNqhMqm70803qy9HGHbIKD"
                 currency="USD"
                 email={me.email}
