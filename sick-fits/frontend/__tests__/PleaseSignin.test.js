@@ -32,4 +32,5 @@ describe('<PleaseSignIn/>', () => {
     expect(wrapper.text()).toContain('Please sign in before Continuing')
     expect(wrapper.find('Signin').exists()).toBe(true)
   });
+
 });
